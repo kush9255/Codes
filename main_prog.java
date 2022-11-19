@@ -21,24 +21,23 @@ class main_prog{
         Scanner sc = new Scanner(file);
         Scanner sc2 = new Scanner(System.in);
         int graph_size = 0, i=0;
-        int [][] graph = new int[3][3]; 
+        String s = sc.nextLine();
+        String[] orig_graph = s.split(" ");
+         graph_size = orig_graph.length;
+        int[][]graph=new int[graph_size][graph_size];
         while (sc.hasNextLine()){
-
-            String s = sc.nextLine();
-            String[] orig_graph = s.split("/s");
-        
-                graph_size = orig_graph.length;
-                graph = new int[graph_size][graph_size];
-            
-
+            orig_graph = s.split(" ");
+         graph_size = orig_graph.length;
             if(orig_graph.length != graph_size || graph_size <=0) {
                 System.err.println("Invalid graph matrix");
                 System.exit(2);
             }
             else{
-                for(int j=0;j<graph_size;j++) graph[i][j] = Integer.parseInt(orig_graph[j]);
+                for(int j=0;j<graph_size;j++)
+                 graph[i][j] = Integer.parseInt(orig_graph[j]);
                 i++;
             }
+            s=sc.nextLine();
         }
         
         System.out.println("The input matrix A the program read from the file is displayed below:");
@@ -53,7 +52,7 @@ class main_prog{
         for(int k = 0 ;k<graph_size;k++) steiner[k] =0;
         int ste_ver = 0;
         System.out.println("List all the Steiner graph.length (type * to quit):");
-        String s = sc2.nextLine();
+         s = sc2.nextLine();
 
         while(s.compareTo("*")!=0 ){
             int vertex = Integer.parseInt(s);
