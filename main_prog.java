@@ -25,7 +25,7 @@ class main_prog{
         String[] orig_graph = s.split(" ");
          graph_size = orig_graph.length;
         int[][]graph=new int[graph_size][graph_size];
-        while (sc.hasNextLine()){
+        while (i<graph_size){
             orig_graph = s.split(" ");
          graph_size = orig_graph.length;
             if(orig_graph.length != graph_size || graph_size <=0) {
@@ -37,6 +37,7 @@ class main_prog{
                  graph[i][j] = Integer.parseInt(orig_graph[j]);
                 i++;
             }
+            if(sc.hasNextLine())
             s=sc.nextLine();
         }
         
@@ -89,14 +90,14 @@ class main_prog{
             System.err.println("No tree can be computed when there are 0 or 1 required graph.length!");
             System.exit(3);
         }
-        int [][] mst_required = primMST(metric_steiner,steiner, ste_ver);
+        int [][] mst = primMST(metric_steiner,steiner, ste_ver);
 
         int [][] ans_matrix = new int[graph_size][graph_size];
 
-        for(i=0;i<mst_required.length;i++){
-                 for(int j=0;j<mst_required.length;j++){
-                        if(mst_required[i][j] == 0) continue;
-                        else if(mst_required[i][j] == graph[i][j]) ans_matrix[i][j] = graph[i][j];
+        for(i=0;i<mst.length;i++){
+                 for(int j=0;j<mst.length;j++){
+                        if(mst[i][j] == 0) continue;
+                        else if(mst[i][j] == graph[i][j]) ans_matrix[i][j] = graph[i][j];
                         else{
                             ans_matrix[i][j] = 0;
                             ArrayList<Integer> b = info.path.get(hash(i,j));
@@ -108,9 +109,9 @@ class main_prog{
                      }
         }
 
-        for(i=0;i<mst_required.length;i++){
+        for(i=0;i<mst.length;i++){
             System.out.print("Neighbors of Vertex "+(i+1)+": ");
-            for(int j=0;j<mst_required.length;j++){
+            for(int j=0;j<mst.length;j++){
                     if(ans_matrix[i][j] > 0) System.out.print((j+1)+" ");
                 }
                 System.out.println();
