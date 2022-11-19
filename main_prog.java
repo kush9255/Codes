@@ -2,13 +2,13 @@ import java.io.File;
 import java.util.*;
 class helper{
     public int [][] ans;
-    public HashMap<Integer, ArrayList<Integer>> path;
+    public HashMap<String, ArrayList<Integer>> path;
 
-    public helper(int [][] ans, HashMap<Integer, ArrayList<Integer>> path){
+    public helper(int [][] ans, HashMap<String, ArrayList<Integer>> path){
         this.ans = ans.clone();
         this.path = new HashMap<>();
 
-        for(Integer i: path.keySet())
+        for(String i: path.keySet())
             this.path.put(i, path.get(i));
         }
     }
@@ -50,7 +50,7 @@ class main_prog{
         }
         sc.close();
         int [] steiner_vertices = new int[graph_size];
-        int ste_ver = 0;
+        int stn_cnt = 0;
         System.out.println("List all the Steiner_verticessteiner_vertices graph.length (type * to quit):");
          s = sc2.nextLine();
 
@@ -65,7 +65,7 @@ class main_prog{
                 s = sc2.nextLine();                                       
             }
             steiner_vertices[vertex-1] = 1;
-            ste_ver++;
+            stn_cnt++;
             s = sc2.nextLine();
         }
         System.out.println("The 2-factor approximate tree we have computed is given below (we describe this tree by listing all the neighbors of all the graph.length in the tree):");
@@ -85,11 +85,11 @@ class main_prog{
   
 
         
-        if(graph_size -ste_ver <= 1){
+        if(graph_size -stn_cnt <= 1){
             System.err.println("No tree can be computed when there are 0 or 1 required graph.length!");
             System.exit(3);
         }
-        int [][] mst = primMST(metric_steiner_vertices,steiner_vertices, ste_ver);
+        int [][] mst = primMST(metric_steiner_vertices,steiner_vertices, stn_cnt);
 
         int [][] ans_matrix = new int[graph_size][graph_size];
 
@@ -99,7 +99,8 @@ class main_prog{
                         else if(mst[i][j] == graph[i][j]) ans_matrix[i][j] = graph[i][j];
                         else{
                             ans_matrix[i][j] = 0;
-                            ArrayList<Integer> b = info.path.get(hash(i,j));
+                            String key=i+""+j+"";
+                            ArrayList<Integer> b = info.path.get(key);
                             for(int y = b.size()-1; y>0; y--){
                                 ans_matrix[b.get(y)][b.get(y-1)] = graph[b.get(y)][b.get(y-1)];
                                 ans_matrix[b.get(y-1)][b.get(y)] = graph[b.get(y-1)][b.get(y)];
@@ -122,11 +123,11 @@ class main_prog{
     public static helper shortest(int [][] graph){
 
         int [][] ans = new int [graph.length][graph.length];
-        HashMap<Integer, ArrayList<Integer>> ans2 = new HashMap<>();
+        HashMap<String, ArrayList<Integer>> ans2 = new HashMap<>();
 
         for(int src =0 ;src<graph.length;src++){
     
-            boolean[] par = new boolean[graph.length];
+            boolean[] shrt_path = new boolean[graph.length];
             int [] distance = new int[graph.length];
             int [] path = new int[graph.length];
 
@@ -141,20 +142,19 @@ class main_prog{
                 int minKey = Integer.MAX_VALUE;
                 int vertex = -1;
                 for (int h = 0; h <graph.length ; h++) {
-                    if(par[h]== false && minKey>distance[h]){
+                    if(shrt_path[h]== false && distance[h]<minKey){
                         minKey = distance[h];
                         vertex = h;
                     }
                 }
 
            
-                par[vertex] = true;
+                shrt_path[vertex] = true;
            
                 for (int neighbour = 0; neighbour <graph.length ; neighbour++) {
                     if(graph[vertex][neighbour]>0){
            
-                        if(graph[vertex][neighbour]!=Integer.MAX_VALUE && par[neighbour]!=true ){
-          
+                        if(graph[vertex][neighbour]!=Integer.MAX_VALUE && shrt_path[neighbour]!=true ){
                             int newKey = graph[vertex][neighbour] + distance[vertex];
                             if(newKey<distance[neighbour]){
                                 distance[neighbour] = newKey;
@@ -165,10 +165,26 @@ class main_prog{
                 }
             }
 
-            for(int p=0; p<graph.length; p++) ans[src][p] = distance[p];
-            for(int p=0; p<graph.length; p++) ans2.put(hash(src,p),get_path(path, p));
+            for(int iter=0; iter<graph.length; iter++) 
+            {
+            ans[src][iter] = distance[iter];
+            }
+
+            for(int iter=0; iter<graph.length; iter++) 
+            {
+                String key=""+src+""+iter;
+                ArrayList<Integer> val = new ArrayList<Integer>();
+                int v=iter;
+                while(v>=0)
+                {
+                    val.add(v);
+                    v=path[v];
+                }
+                ans2.put(key, val);
+            }
 
         }
+
         return new helper(ans, ans2);
 
     }
@@ -185,12 +201,12 @@ class main_prog{
         return (i+13) * (j+13) *(i+j+26);
     }
     
-    public static int[][] primMST(int graph[][], int [] steiner_vertices, int ste_ver)
+    public static int[][] primMST(int graph[][], int [] steiner_vertices, int stn_cnt)
     {
 
         
 
-        int V = graph.length - ste_ver;
+        int V = graph.length - stn_cnt;
         int i = 0,j = 0, k =0 , m=0;
         int [][] graph2 = new int[V][V];
         while(k<graph2.length){
@@ -279,7 +295,7 @@ class main_prog{
                 continue;
             }
             while(j<graph.length){
-                if(steiner_vertices[j] == 1ans2){
+                if(steiner_vertices[j] == 1){
                     j++;
                     continue;
 
