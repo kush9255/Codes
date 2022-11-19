@@ -49,10 +49,9 @@ class main_prog{
                 System.out.println();
         }
         sc.close();
-        int [] steiner = new int[graph_size];
-        for(int k = 0 ;k<graph_size;k++) steiner[k] =0;
+        int [] steiner_vertices = new int[graph_size];
         int ste_ver = 0;
-        System.out.println("List all the Steiner graph.length (type * to quit):");
+        System.out.println("List all the Steiner_verticessteiner_vertices graph.length (type * to quit):");
          s = sc2.nextLine();
 
         while(s.compareTo("*")!=0 ){
@@ -61,24 +60,24 @@ class main_prog{
                 System.err.println("Invalid Vertex");
                 System.exit(3);
             }
-            if(steiner[vertex - 1] == 1){ 
-                System.err.println("Steiner vertice already exists!");
+            if(steiner_vertices[vertex - 1] == 1){ 
+                System.err.println("Duplicate entry try");
                 s = sc2.nextLine();                                       
             }
-            steiner[vertex-1] = 1;
+            steiner_vertices[vertex-1] = 1;
             ste_ver++;
             s = sc2.nextLine();
         }
         System.out.println("The 2-factor approximate tree we have computed is given below (we describe this tree by listing all the neighbors of all the graph.length in the tree):");
         
-        int [][] metric_steiner = new int[graph_size][graph_size];
+        int [][] metric_steiner_vertices = new int[graph_size][graph_size];
         helper info = shortest(graph);
 
-        metric_steiner = info.ans.clone();
+        metric_steiner_vertices = info.ans.clone();
 
         for(i=0;i<graph_size;i++){
             for(int j=0;j<graph_size;j++){
-                    System.out.print(metric_steiner[i][j]+" ");
+                    System.out.print(metric_steiner_vertices[i][j]+" ");
                 }
                 System.out.println();
         }
@@ -90,7 +89,7 @@ class main_prog{
             System.err.println("No tree can be computed when there are 0 or 1 required graph.length!");
             System.exit(3);
         }
-        int [][] mst = primMST(metric_steiner,steiner, ste_ver);
+        int [][] mst = primMST(metric_steiner_vertices,steiner_vertices, ste_ver);
 
         int [][] ans_matrix = new int[graph_size][graph_size];
 
@@ -151,15 +150,15 @@ class main_prog{
            
                 spt[vertex] = true;
            
-                for (int vertex_V = 0; vertex_V <graph.length ; vertex_V++) {
-                    if(graph[vertex][vertex_V]>0){
+                for (int neighbour = 0; neighbour <graph.length ; neighbour++) {
+                    if(graph[vertex][neighbour]>0){
            
-                        if(spt[vertex_V]==false && graph[vertex][vertex_V]!=Integer.MAX_VALUE){
+                        if(spt[neighbour]==false && graph[vertex][neighbour]!=Integer.MAX_VALUE){
           
-                            int newKey = graph[vertex][vertex_V] + distance[vertex];
-                            if(newKey<distance[vertex_V]){
-                                distance[vertex_V] = newKey;
-                                path[vertex_V] = vertex;
+                            int newKey = graph[vertex][neighbour] + distance[vertex];
+                            if(newKey<distance[neighbour]){
+                                distance[neighbour] = newKey;
+                                path[neighbour] = vertex;
                             }
                         }
                     }
@@ -186,7 +185,7 @@ class main_prog{
         return (i+13) * (j+13) *(i+j+26);
     }
     
-    public static int[][] primMST(int graph[][], int [] steiner, int ste_ver)
+    public static int[][] primMST(int graph[][], int [] steiner_vertices, int ste_ver)
     {
 
         
@@ -195,13 +194,13 @@ class main_prog{
         int i = 0,j = 0, k =0 , m=0;
         int [][] graph2 = new int[V][V];
         while(k<graph2.length){
-            if(steiner[i] == 1){
+            if(steiner_vertices[i] == 1){
                 i++;
                 continue;
             }
             j=0; m=0;
             while(m<graph2.length){
-                if(steiner[j] == 1){
+                if(steiner_vertices[j] == 1){
                     j++;
                     continue;
                 }
@@ -275,12 +274,12 @@ class main_prog{
 
         while(i<graph.length){
             j=0; m=0;
-            if(steiner[i] == 1){
+            if(steiner_vertices[i] == 1){
                 i++;
                 continue;
             }
             while(j<graph.length){
-                if(steiner[j] == 1){
+                if(steiner_vertices[j] == 1){
                     j++;
                     continue;
 
