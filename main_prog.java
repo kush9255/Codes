@@ -126,7 +126,7 @@ class main_prog{
 
         for(int src =0 ;src<graph.length;src++){
     
-            boolean[] spt = new boolean[graph.length];
+            boolean[] par = new boolean[graph.length];
             int [] distance = new int[graph.length];
             int [] path = new int[graph.length];
 
@@ -141,19 +141,19 @@ class main_prog{
                 int minKey = Integer.MAX_VALUE;
                 int vertex = -1;
                 for (int h = 0; h <graph.length ; h++) {
-                    if(spt[h]== false && minKey>distance[h]){
+                    if(par[h]== false && minKey>distance[h]){
                         minKey = distance[h];
                         vertex = h;
                     }
                 }
 
            
-                spt[vertex] = true;
+                par[vertex] = true;
            
                 for (int neighbour = 0; neighbour <graph.length ; neighbour++) {
                     if(graph[vertex][neighbour]>0){
            
-                        if(spt[neighbour]==false && graph[vertex][neighbour]!=Integer.MAX_VALUE){
+                        if(graph[vertex][neighbour]!=Integer.MAX_VALUE && par[neighbour]!=true ){
           
                             int newKey = graph[vertex][neighbour] + distance[vertex];
                             if(newKey<distance[neighbour]){
@@ -279,7 +279,7 @@ class main_prog{
                 continue;
             }
             while(j<graph.length){
-                if(steiner_vertices[j] == 1){
+                if(steiner_vertices[j] == 1ans2){
                     j++;
                     continue;
 
