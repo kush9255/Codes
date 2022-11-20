@@ -1,8 +1,35 @@
 import java.io.File;
 import java.util.*;
 class main_prog{
+    static int stn_cnt=0;
     public static void main(String args[]) throws Exception {
-        File file = new File("/home/kushal/Downloads/File.txt");
+        
+        int[][]graph=Read_file("/home/kushal/Downloads/File.txt");
+        int [] steiner_vertices=stiener_verify(graph.length);
+        int i=0,graph_size=graph.length;
+        System.out.println("The 2-factor approximate tree we have computed is given below (we describe this tree by listing all the neighbors of all the graph.length in the tree):");
+        
+        int [][] combined_matrix = shortest(graph);
+        int[][]metric_steiner_vertices=new int[graph_size][graph_size];
+        int[]path_mat=new int[graph_size];
+        int k=combined_matrix.length-1;
+        for(i=0;i<graph_size;i++)
+        path_mat[i]=combined_matrix[k][i];
+
+        for( i=0;i<graph_size;i++)
+        for(int j=0;j<graph_size;j++)
+        metric_steiner_vertices[i][j]=combined_matrix[i][j];
+        HashMap<String,ArrayList<Integer>>path=get_path(metric_steiner_vertices,path_mat);
+
+        int [][]mst = primMST(metric_steiner_vertices,steiner_vertices, stn_cnt,path);
+
+        steiner_mst(mst,path,graph);
+        
+    }
+
+    public static int[][] Read_file(String filepath) throws Exception
+    {
+        File file = new File(filepath);
         Scanner file_reader = new Scanner(file);
         Scanner sc2 = new Scanner(System.in);
         int graph_size = 0, i=0;
@@ -34,51 +61,31 @@ class main_prog{
                 System.out.println();
         }
         file_reader.close();
-        int [] steiner_vertices = new int[graph_size];
-        int stn_cnt = 0;
-        System.out.println("List all the Steiner_verticessteiner_vertices graph.length (type * to quit):");
-         s = sc2.nextLine();
+        return graph;
+    }
+public static int[] stiener_verify(int graph_size)
+{
+    Scanner sc2=new Scanner(System.in);
+    int [] steiner_vertices = new int[graph_size];
+    System.out.println("List all the Steiner_verticessteiner_vertices graph.length (type * to quit):");
+     String s = sc2.nextLine();
 
-        while(s.compareTo("*")!=0 ){
-            int vertex = Integer.parseInt(s);
-            if(vertex > graph_size || vertex <=0){
-                System.err.println("Invalid Vertex");
-                System.exit(3);
-            }
-            if(steiner_vertices[vertex - 1] == 1){ 
-                System.err.println("Duplicate entry try");
-                s = sc2.nextLine();                                       
-            }
-            steiner_vertices[vertex-1] = 1;
-            stn_cnt++;
-            s = sc2.nextLine();
-        }
-        System.out.println("The 2-factor approximate tree we have computed is given below (we describe this tree by listing all the neighbors of all the graph.length in the tree):");
-        
-        int [][] combined_matrix = shortest(graph);
-        int[][]metric_steiner_vertices=new int[graph_size][graph_size];
-        int[]path_mat=new int[graph_size];
-        int k=combined_matrix.length-1;
-        for(i=0;i<graph_size;i++)
-        path_mat[i]=combined_matrix[k][i];
-
-        for( i=0;i<graph_size;i++)
-        for(int j=0;j<graph_size;j++)
-        metric_steiner_vertices[i][j]=combined_matrix[i][j];
-        HashMap<String,ArrayList<Integer>>path=get_path(metric_steiner_vertices,path_mat);
-
-
-        if(graph_size -stn_cnt <= 1){
-            System.err.println("for valid tree vertices have to be greater than one");
+    while(s.compareTo("*")!=0 ){
+        int vertex = Integer.parseInt(s);
+        if(vertex > graph_size || vertex <=0){
+            System.err.println("Invalid Vertex");
             System.exit(3);
         }
-        int [][]mst = primMST(metric_steiner_vertices,steiner_vertices, stn_cnt,path);
-
-        steiner_mst(mst,path,graph);
-        
+        if(steiner_vertices[vertex - 1] == 1){ 
+            System.err.println("Duplicate entry try");
+            s = sc2.nextLine();                                       
+        }
+        steiner_vertices[vertex-1] = 1;
+        stn_cnt++;
+        s = sc2.nextLine();
     }
-
-
+    return steiner_vertices;
+}
 
     public static int[][] shortest(int [][] graph){
         int src=0;
