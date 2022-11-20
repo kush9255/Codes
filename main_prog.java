@@ -1,7 +1,7 @@
 import java.io.File;
 import java.util.*;
 
-class steiner_tree {
+class main_prog {
     static int stn_cnt = 0;
     public static void main(String args[]) throws Exception {
 
@@ -59,12 +59,24 @@ class steiner_tree {
             System.out.println();
         }
         file_reader.close();
+        boolean disconnected =true;
+        for (i = 0; i < graph_size; i++) {
+            for (int j = 0; j < graph_size; j++) {
+                if(graph[i][j] !=0)
+                disconnected=false;
+            }
+        }
+            if(disconnected)
+            {
+                System.out.println("Graph is disconnected");
+                System.exit(4);
+            }
         return graph;
     }
     public static int[] stiener_verify(int graph_size) {
         Scanner sc2 = new Scanner(System.in);
         int[] steiner_vertices = new int[graph_size];
-        System.out.println("List all the Steiner_verticessteiner_vertices graph.length (type * to quit):");
+        System.out.println("List all the Steiner vertices  (type * to quit):");
         String s = sc2.nextLine();
 
         while (s.compareTo("*") != 0) {
@@ -75,10 +87,11 @@ class steiner_tree {
             }
             if (steiner_vertices[vertex - 1] == 1) {
                 System.err.println("Duplicate entry try");
-                s = sc2.nextLine();
             }
+            else{
             steiner_vertices[vertex - 1] = 1;
             stn_cnt++;
+            }
             s = sc2.nextLine();
         }
         return steiner_vertices;
@@ -178,21 +191,25 @@ class steiner_tree {
         int required_verices = graph.length - stn_cnt;
         int i = 0, j = 0, k = 0, m = 0;
         int[][] graph2 = new int[required_verices][required_verices];
-        while (k < graph2.length) {
-            if (steiner_vertices[i] == 0) {
-                j = 0;  m = 0;
-                while (j < graph2.length) {
-                    if (steiner_vertices[j] == 0) {
-                        graph2[k][m] = graph[i][j];
-                        m++;
-                    }
+        while(k<graph2.length){
+            if(steiner_vertices[i] == 1){
+                i++;
+                continue;
+            }
+            j=0; m=0;
+            while(m<graph2.length){
+                if(steiner_vertices[j] == 1){
                     j++;
+                    continue;
                 }
+                graph2[k][m] = graph[i][j];
+                m++;
+                j++;
             }
             k++;
             i++;
         }
-
+        
         int[][] ans = new int[required_verices][required_verices];
         int parent[] = new int[required_verices];
         int key[] = new int[required_verices];
@@ -233,20 +250,28 @@ class steiner_tree {
         
         i = 0;j = 0;k = 0;m = 0;
 
-        while (i < graph.length) {
-            j = 0;m = 0;
-            if (steiner_vertices[i] == 0) {
-                while (j < graph.length) {     
-                if(steiner_vertices[j]==0)
-                {
+        while(i<graph.length){
+            j=0; m=0;
+            if(steiner_vertices[i] == 1){
+                i++;
+                continue;
+            }
+            while(j<graph.length){
+                if(steiner_vertices[j] == 1){
+                    j++;
+                    continue;
+
+                }
+                else{
                     ans2[i][j] = ans[k][m];
                     m++;
+                    j++;
+                        
                 }
-                j++;
             }
+            k++;
+            i++;
         }
-        k++;i++;
-    }
         return ans2;
 
     }
