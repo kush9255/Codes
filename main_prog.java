@@ -1,14 +1,12 @@
 import java.io.File;
 import java.util.*;
 class main_prog{
-
-    
     public static void main(String args[]) throws Exception {
         File file = new File("/home/kushal/Downloads/File.txt");
-        Scanner sc = new Scanner(file);
+        Scanner file_reader = new Scanner(file);
         Scanner sc2 = new Scanner(System.in);
         int graph_size = 0, i=0;
-        String s = sc.nextLine();
+        String s = file_reader.nextLine();
         String[] orig_graph = s.split(" ");
          graph_size = orig_graph.length;
         int[][]graph=new int[graph_size][graph_size];
@@ -24,8 +22,8 @@ class main_prog{
                  graph[i][j] = Integer.parseInt(orig_graph[j]);
                 i++;
             }
-            if(sc.hasNextLine())
-            s=sc.nextLine();
+            if(file_reader.hasNextLine())
+            s=file_reader.nextLine();
         }
         
         System.out.println("The input matrix A the program read from the file is displayed below:");
@@ -35,7 +33,7 @@ class main_prog{
                 }
                 System.out.println();
         }
-        sc.close();
+        file_reader.close();
         int [] steiner_vertices = new int[graph_size];
         int stn_cnt = 0;
         System.out.println("List all the Steiner_verticessteiner_vertices graph.length (type * to quit):");
@@ -70,48 +68,14 @@ class main_prog{
         HashMap<String,ArrayList<Integer>>path=get_path(metric_steiner_vertices,path_mat);
 
 
-/* 
-        for(i=0;i<graph_size;i++){
-            for(int j=0;j<graph_size;j++){
-                    System.out.print(metric_steiner_vertices[i][j]+" ");
-                }
-                System.out.println();
-        }
-        */
-  
-
-        
         if(graph_size -stn_cnt <= 1){
             System.err.println("for valid tree vertices have to be greater than one");
             System.exit(3);
         }
-        int [][] mst = primMST(metric_steiner_vertices,steiner_vertices, stn_cnt);
+        int [][]mst = primMST(metric_steiner_vertices,steiner_vertices, stn_cnt,path);
 
-        int [][] ans_matrix = new int[graph_size][graph_size];
-
-        for(i=0;i<mst.length;i++){
-                 for(int j=0;j<mst.length;j++){
-                        if(mst[i][j] == 0) continue;
-                        else if(mst[i][j] == graph[i][j]) ans_matrix[i][j] = graph[i][j];
-                        else{
-                            ans_matrix[i][j] = 0;
-                            String key=i+""+j+"";
-                            ArrayList<Integer> b = path.get(key);
-                            for(int y = b.size()-1; y>0; y--){
-                                ans_matrix[b.get(y)][b.get(y-1)] = graph[b.get(y)][b.get(y-1)];
-                                ans_matrix[b.get(y-1)][b.get(y)] = graph[b.get(y-1)][b.get(y)];
-                            }
-                        }
-                     }
-        }
-
-        for(i=0;i<mst.length;i++){
-            System.out.print("Neighbors of Vertex "+(i+1)+": ");
-            for(int j=0;j<mst.length;j++){
-                    if(ans_matrix[i][j] > 0) System.out.print((j+1)+" ");
-                }
-                System.out.println();
-        }
+        steiner_mst(mst,path,graph);
+        
     }
 
 
@@ -192,7 +156,7 @@ class main_prog{
             }
             return ans2;
     }
-    public static int[][] primMST(int graph[][], int [] steiner_vertices, int stn_cnt)
+    public static int[][] primMST(int graph[][], int [] steiner_vertices, int stn_cnt,HashMap<String,ArrayList<Integer>> path)
     {
         int V = graph.length - stn_cnt;
         int i = 0,j = 0, k =0 , m=0;
@@ -312,6 +276,33 @@ class main_prog{
             */
 
         return ans2;
+
+    }
+    public static void steiner_mst(int[][]mst,HashMap<String,ArrayList<Integer>> path,int[][]graph)
+    {
+        int [][] ans_matrix = new int[graph.length][graph.length];
+
+        for(int i=0;i<mst.length;i++){
+                 for(int j=0;j<mst.length;j++){
+                        if(mst[i][j] == 0) continue;
+                        else if(mst[i][j] == graph[i][j]) ans_matrix[i][j] = graph[i][j];
+                        else{
+                            ans_matrix[i][j] = 0;
+                            ArrayList<Integer> b = path.get(i+""+j);
+                            for(int y = b.size()-1; y>0; y--){
+                                ans_matrix[b.get(y)][b.get(y-1)] = graph[b.get(y)][b.get(y-1)];
+                                ans_matrix[b.get(y-1)][b.get(y)] = graph[b.get(y-1)][b.get(y)];
+                            }
+                        }
+                     }
+        }
+        for(int i=0;i<mst.length;i++){
+            System.out.print("Neighbors of Vertex "+(i+1)+": ");
+            for(int j=0;j<mst.length;j++){
+                    if(ans_matrix[i][j] > 0) System.out.print((j+1)+" ");
+                }
+                System.out.println();
+        }
 
     }
 }
